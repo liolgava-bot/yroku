@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8 клас — Історія обчислювальної техніки</title>
+    <link rel="stylesheet" href="test_files/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="nav-top">
+        <a href="../index.html" class="back-link">← До тем 8 класу</a>
+    </div>
+    <h1>Історія розвитку обчислювальної техніки</h1>
+    <div class="subtitle">8 клас • 14 завдань • Максимальна оцінка: 10 балів</div>
+
+    <div class="student-box">
+        <label for="student-name">Прізвище та ім'я учня:</label>
+        <input type="text" id="student-name" placeholder="Наприклад: Коваленко Олександр" autocomplete="off">
+        <div id="name-error" class="error-msg">Будь ласка, введіть прізвище та ім'я перед завершенням тесту.</div>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div class="controls">
+        <button type="button" id="submit-btn" onclick="finishQuiz()">Завершити тест та отримати оцінку</button>
+        <button type="button" id="reset-btn" class="reset-btn" onclick="resetQuiz()">Пройти знову</button>
+    </div>
+
+    <div id="result-box"></div>
+</div>
+<script src="test_files/script.js"></script>
+</body>
+</html>
