@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6 клас: Оформлення текстових документів та рефератів</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #1e293b; line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 820px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #1d4ed8; text-decoration: none; font-weight: 600; }
+        h1 { text-align: center; color: #1e3a8a; margin: 5px 0; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 25px; }
+        .student-box { background: #eff6ff; border: 2px solid #93c5fd; padding: 18px; border-radius: 10px; margin-bottom: 25px; }
+        .student-box label { display: block; font-weight: bold; margin-bottom: 8px; color: #1e3a8a; }
+        .student-box input { width: 100%; box-sizing: border-box; padding: 12px; font-size: 1.05em; border: 1px solid #cbd5e1; border-radius: 8px; }
+        .student-box input.error-border { border-color: #ef4444; background: #fef2f2; }
+        .question-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px; background: #f8fafc; }
+        .question-header { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+        .illustration { flex-shrink: 0; width: 68px; height: 68px; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; }
+        .illustration svg { width: 100%; height: 100%; }
+        .question-title { font-weight: bold; font-size: 1.1em; color: #0f172a; }
+        .options { display: flex; flex-direction: column; gap: 9px; }
+        .option-label { display: flex; align-items: center; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; transition: 0.2s; }
+        .option-label:hover:not(.disabled) { background: #eff6ff; border-color: #3b82f6; }
+        .option-label input { margin-right: 12px; transform: scale(1.2); }
+        .option-label.disabled { opacity: 0.7; cursor: not-allowed; }
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #14532d; font-weight: bold; }
+        .incorrect { background: #fee2e2 !important; border-color: #ef4444 !important; color: #7f1d1d; text-decoration: line-through; }
+        .check-single-btn { margin-top: 12px; background: #0284c7; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95em; }
+        .check-single-btn:hover { background: #0369a1; }
+        .check-single-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        .feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 0.95em; display: none; }
+        .feedback.warn { display: block; background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+        .feedback.ok { display: block; background: #dcfce7; border: 1px solid #22c55e; color: #166534; }
+        .feedback.fail { display: block; background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+        .controls { text-align: center; margin-top: 30px; }
+        .main-btn { background: #1d4ed8; color: #fff; border: none; padding: 14px 32px; font-size: 1.1em; font-weight: 600; border-radius: 8px; cursor: pointer; margin: 5px; }
+        .main-btn:hover { background: #1e40af; }
+        .reset-btn { background: #64748b; }
+        .reset-btn:hover { background: #475569; }
+        #result-box { display: none; margin-top: 25px; padding: 25px; border-radius: 10px; background: #eff6ff; border: 2px solid #2563eb; text-align: center; font-size: 1.25em; }
+        .grade-highlight { font-size: 1.6em; font-weight: bold; color: #1d4ed8; display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../" class="back-link">← Назад до тем 6 класу</a>
+    <h1>Оформлення текстових документів та рефератів</h1>
+    <div class="subtitle">6 клас • 12 завдань • 2 спроби • Максимум 10 балів</div>
+
+    <div class="student-box">
+        <label for="student-name">Прізвище та ім'я учня (обов'язково):</label>
+        <input type="text" id="student-name" placeholder="Наприклад: Коваленко Максим">
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div class="controls">
+        <button type="button" class="main-btn" id="finish-btn">Завершити тест і отримати оцінку</button>
+        <button type="button" class="main-btn reset-btn" id="reset-btn">Пройти знову</button>
+    </div>
+
+    <div id="result-box"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const icons = {
+        doc: `<svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="3" fill="#eff6ff" stroke="#1d4ed8" stroke-width="3"/><line x1="22" y1="20" x2="42" y2="20" stroke="#1d4ed8" stroke-width="3"/><line x1="22" y1="28" x2="42" y2="28" stroke="#64748b" stroke-width="2.5"/><line x1="22" y1="36" x2="36" y2="36" stroke="#64748b" stroke-width="2.5"/></svg>`,
+        a4: `<svg viewBox="0 0 64 64"><rect x="16" y="8" width="32" height="48" rx="2" fill="#fff" stroke="#0284c7" stroke-width="3"/><text x="23" y="37" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0284c7">A4</text></svg>`,
+        margins: `<svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="2" fill="#fff" stroke="#334155" stroke-width="2.5"/><rect x="21" y="16" width="22" height="32" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2"/></svg>`,
+        orient: `<svg viewBox="0 0 64 64"><rect x="10" y="12" width="20" height="32" rx="2" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2.5"/><rect x="26" y="30" width="30" height="20" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/></svg>`,
+        title: `<svg viewBox="0 0 64 64"><rect x="12" y="14" width="40" height="36" rx="4" fill="#f8fafc" stroke="#475569" stroke-width="2.5"/><line x1="20" y1="26" x2="44" y2="26" stroke="#1e3a8a" stroke-width="4"/><line x1="24" y1="36" x2="40" y2="36" stroke="#94a3b8" stroke-width="2.5"/></svg>`,
+        font: `<svg viewBox="0 0 64 64"><text x="12" y="44" font-family="serif" font-size="28" font-weight="bold" fill="#1e3a8a">Aa</text><text x="42" y="44" font-family="sans-serif" font-size="13" font-weight="bold" fill="#0284c7">14</text></svg>`,
+        print: `<svg viewBox="0 0 64 64"><rect x="18" y="10" width="28" height="14" fill="#e2e8f0" stroke="#334155" stroke-width="2.5"/><rect x="10" y="24" width="44" height="20" rx="3" fill="#475569"/><rect x="18" y="38" width="28" height="16" fill="#fff" stroke="#334155" stroke-width="2.5"/></svg>`,
+        props: `<svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="3" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/><line x1="14" y1="16" x2="50" y2="16" stroke="#ef4444" stroke-width="2"/><line x1="14" y1="48" x2="50" y2="48" stroke="#ef4444" stroke-width="2"/><rect x="20" y="22" width="24" height="20" fill="#e0f2fe"/></svg>`,
+        toc: `<svg viewBox="0 0 64 64"><rect x="14" y="8" width="36" height="48" rx="3" fill="#fff" stroke="#1e3a8a" stroke-width="2.5"/><line x1="20" y1="20" x2="36" y2="20" stroke="#1e3a8a" stroke-width="2.5"/><circle cx="43" cy="20" r="1.5" fill="#1e3a8a"/><line x1="23" y1="28" x2="36" y2="28" stroke="#64748b" stroke-width="2"/><circle cx="43" cy="28" r="1.5" fill="#64748b"/><line x1="23" y1="36" x2="36" y2="36" stroke="#64748b" stroke-width="2"/><circle cx="43" cy="36" r="1.5" fill="#64748b"/></svg>`
+    };
+
+    const quizData = [
+        {
+            q: "Завдання 1. Чому важливо правильно оформляти наукові роботи?",
+            icon: icons.doc,
+            options: [
+                "Щоб вони привертали увагу",
+                "Щоб полегшити читання та сприйняття інформації",
+                "Щоб вразити тих, хто буде їх читати",
+                "Це не має значення"
+            ],
+            correct: 1,
+            hint: "Чітка структура, правильні відступи та читабельний шрифт допомагають читачеві швидко знаходити головне та краще розуміти текст."
+        },
+        {
+            q: "Завдання 2. Який стандартний розмір аркуша використовується для друку рефератів?",
+            icon: icons.a4,
+            options: ["A3", "A4", "A5", "A2"],
+            correct: 1,
+            hint: "Для стандартних навчальних та офіційних документів використовують аркуш формату A4 (210 × 297 мм)."
+        },
+        {
+            q: "Завдання 3. Що таке поля в документі?",
+            icon: icons.margins,
+            options: [
+                "Це простір між текстом і краями сторінки",
+                "Це текст, який повторюється на всіх сторінках",
+                "Це заголовок документа",
+                "Це частина таблиці"
+            ],
+            correct: 0,
+            hint: "Поля (верхнє, нижнє, ліве, праве) — це порожні відступи від країв аркуша до області основного тексту."
+        },
+        {
+            q: "Завдання 4. Яка буває орієнтація сторінки?",
+            icon: icons.orient,
+            options: [
+                "Книжкова та альбомна",
+                "Ліва та права",
+                "Горизонтальна та вертикальна",
+                "Верхня та нижня"
+            ],
+            correct: 0,
+            hint: "У текстових редакторах сторінку можна розташувати вертикально (книжкова орієнтація) або горизонтально (альбомна)."
+        },
+        {
+            q: "Завдання 5. Якою має бути назва наукової роботи?",
+            icon: icons.title,
+            options: [
+                "Лаконічною та короткою, відповідати суті проблеми",
+                "Довгою та незрозумілою, щоб всі побачили що це непросто",
+                "Загальною, але красиво оформленою",
+                "Без додаткових пояснень, просто набір понять"
+            ],
+            correct: 0,
+            hint: "Заголовок реферату чи дослідження повинен бути стислим, точним і чітко відображати головну тему роботи."
+        },
+        {
+            q: "Завдання 6. Який розмір шрифту слід використовувати для основного тексту реферату?",
+            icon: icons.font,
+            options: ["11 пт", "12 пт", "14 пт", "16 пт"],
+            correct: 2,
+            hint: "Загальноприйнятим стандартом для набору основного тексту рефератів є кегль 14 пт (зазвичай шрифтом Times New Roman)."
+        },
+        {
+            q: "Завдання 7. Що потрібно зробити перед друком документа?",
+            icon: icons.print,
+            options: [
+                "Змінити колір шрифту та відступи абзаців",
+                "Перевірити параметри сторінки",
+                "Додати картинки та посилання",
+                "Змінити стиль заголовків та колір тексту"
+            ],
+            correct: 1,
+            hint: "Перед відправленням на принтер варто переглянути документ та перевірити параметри сторінки (розмір паперу, поля, орієнтацію)."
+        },
+        {
+            q: "Завдання 8. Які властивості має сторінка документа?",
+            icon: icons.props,
+            options: [
+                "Розмір, поля, орієнтація, колонтитули",
+                "Колір, шрифт, стиль, зображення, посилання",
+                "Тільки розмір і поля",
+                "Лише відступи"
+            ],
+            correct: 0,
+            hint: "Властивості шрифту чи абзацу стосуються тексту, а саме до сторінки належать її розмір, поля, орієнтація та колонтитули."
+        },
+        {
+            q: "Завдання 9. Ти пишеш реферат на обрану тему. Залишився етап оформлення роботи. Чому важливо правильно оформити реферат?",
+            icon: icons.doc,
+            options: [
+                "Щоб був естетичний вигляд",
+                "Щоб полегшити читання та сприйняття інформації",
+                "Щоб вразити вчителя / вчительку",
+                "Це не має значення"
+            ],
+            correct: 1,
+            hint: "Головна мета вимог до оформлення тексту — зробити матеріал структурованим, зручним для читання та розуміння."
+        },
+        {
+            q: "Завдання 10. Який варіант оформлення шрифтів і кольорів найкращий в документі?",
+            icon: icons.font,
+            options: [
+                "Один шрифт і колір для заголовків і основного тексту",
+                "Три шрифти, п'ять кольорів",
+                "Один шрифт, всі заголовки різнокольорові",
+                "Два шрифти без обмежень у кольорах"
+            ],
+            correct: 0,
+            hint: "Для навчальних і ділових документів дотримуються єдиного стриманого стилю: один тип шрифту та один колір тексту."
+        },
+        {
+            q: "Завдання 11. Ти працюєш над рефератом. Потрібно створити зміст, щоб легко орієнтуватися в структурі документа. Які елементи мають бути в змісті?",
+            icon: icons.toc,
+            options: [
+                "Тільки основні розділи",
+                "Основні розділи та підрозділи з відповідними номерами сторінок",
+                "Основні розділи та списки з відповідними номерами сторінок",
+                "Немає спеціальних вимог до змісту"
+            ],
+            correct: 1,
+            hint: "Зміст виконує роль навігатора, тому він містить назви всіх розділів і підрозділів разом із номерами сторінок, де вони починаються."
+        },
+        {
+            q: "Завдання 12. Реферат готовий до друку! Що потрібно зробити перед друком документа?",
+            icon: icons.print,
+            options: [
+                "Змінити колір шрифту та відступи абзаців",
+                "Перевірити параметри сторінки та форматування",
+                "Додати картинки та посилання",
+                "Змінити стиль заголовків та кольори тексту"
+            ],
+            correct: 1,
+            hint: "Перед друком важливо переконатися, що параметри сторінки та форматування не збилися і текст не виходить за межі полів."
+        }
+    ];
+
+    const state = quizData.map(() => ({ attempts: 0, solved: false, points: 0 }));
+    const container = document.getElementById("quiz-container");
+    const nameInput = document.getElementById("student-name");
+    const resultBox = document.getElementById("result-box");
+
+    function render() {
+        container.innerHTML = "";
+        quizData.forEach((item, idx) => {
+            const card = document.createElement("div");
+            card.className = "question-card";
+
+            const header = document.createElement("div");
+            header.className = "question-header";
+
+            const iconDiv = document.createElement("div");
+            iconDiv.className = "illustration";
+            iconDiv.innerHTML = item.icon;
+            header.appendChild(iconDiv);
+
+            const title = document.createElement("div");
+            title.className = "question-title";
+            title.textContent = item.q;
+            header.appendChild(title);
+
+            card.appendChild(header);
+
+            const optsDiv = document.createElement("div");
+            optsDiv.className = "options";
+
+            item.options.forEach((optText, oIdx) => {
+                const lbl = document.createElement("label");
+                lbl.className = "option-label";
+                lbl.id = `lbl-${idx}-${oIdx}`;
+
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `q-${idx}`;
+                radio.value = oIdx;
+
+                lbl.appendChild(radio);
+                lbl.appendChild(document.createTextNode(optText));
+                optsDiv.appendChild(lbl);
+            });
+            card.appendChild(optsDiv);
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "check-single-btn";
+            btn.id = `btn-${idx}`;
+            btn.textContent = "Перевірити відповідь";
+            btn.onclick = () => checkQuestion(idx);
+            card.appendChild(btn);
+
+            const fb = document.createElement("div");
+            fb.className = "feedback";
+            fb.id = `fb-${idx}`;
+            card.appendChild(fb);
+
+            container.appendChild(card);
+        });
+    }
+
+    function lockQuestion(idx) {
+        state[idx].solved = true;
+        document.getElementById(`btn-${idx}`).disabled = true;
+        quizData[idx].options.forEach((_, oIdx) => {
+            const radio = document.querySelector(`input[name="q-${idx}"][value="${oIdx}"]`);
+            radio.disabled = true;
+            document.getElementById(`lbl-${idx}-${oIdx}`).classList.add("disabled");
+        });
+        document.getElementById(`lbl-${idx}-${quizData[idx].correct}`).classList.add("correct");
+    }
+
+    function checkQuestion(idx) {
+        if (state[idx].solved) return;
+        const selected = document.querySelector(`input[name="q-${idx}"]:checked`);
+        const fb = document.getElementById(`fb-${idx}`);
+
+        if (!selected) {
+            fb.className = "feedback warn";
+            fb.textContent = "Оберіть варіант відповіді перед перевіркою.";
+            return;
+        }
+
+        const ans = parseInt(selected.value, 10);
+        const item = quizData[idx];
+        state[idx].attempts++;
+
+        if (ans === item.correct) {
+            state[idx].points = state[idx].attempts === 1 ? 1 : 0.5;
+            fb.className = "feedback ok";
+            fb.textContent = state[idx].attempts === 1
+                ? "Правильно з першої спроби! (+1 бал)"
+                : "Правильно з другої спроби! (+0,5 бала)";
+            lockQuestion(idx);
+        } else {
+            const wrongLbl = document.getElementById(`lbl-${idx}-${ans}`);
+            wrongLbl.classList.add("incorrect", "disabled");
+            selected.disabled = true;
+            selected.checked = false;
+
+            if (state[idx].attempts === 1) {
+                fb.className = "feedback warn";
+                fb.innerHTML = `<b>Неправильно. Спробуйте ще раз (залишилась 1 спроба).</b><br>Підказка: ${item.hint}`;
+            } else {
+                state[idx].points = 0;
+                fb.className = "feedback fail";
+                fb.innerHTML = `<b>На жаль, обидві спроби використано (0 балів).</b><br>Пояснення: ${item.hint}`;
+                lockQuestion(idx);
+            }
+        }
+    }
+
+    document.getElementById("finish-btn").onclick = function() {
+        const studentName = nameInput.value.trim();
+        if (!studentName) {
+            nameInput.classList.add("error-border");
+            nameInput.focus();
+            alert("Будь ласка, введіть прізвище та ім'я перед завершенням тесту!");
+            return;
+        }
+        nameInput.classList.remove("error-border");
+
+        quizData.forEach((_, idx) => {
+            if (!state[idx].solved) {
+                const selected = document.querySelector(`input[name="q-${idx}"]:checked`);
+                if (selected) {
+                    checkQuestion(idx);
+                }
+                if (!state[idx].solved) {
+                    const fb = document.getElementById(`fb-${idx}`);
+                    fb.className = "feedback fail";
+                    fb.textContent = "Відповідь не була надана вчасно (0 балів).";
+                    lockQuestion(idx);
+                }
+            }
+        });
+
+        const totalPoints = state.reduce((sum, s) => sum + s.points, 0);
+        const grade10 = ((totalPoints / quizData.length) * 10).toFixed(1);
+
+        resultBox.style.display = "block";
+        resultBox.innerHTML = `
+            <div>Учень / учениця: <b>${studentName}</b></div>
+            <div style="margin-top:6px;">Набрано балів: <b>${totalPoints}</b> із <b>${quizData.length}</b></div>
+            <span class="grade-highlight">Підсумкова оцінка: ${grade10} / 10 балів</span>
+        `;
+        resultBox.scrollIntoView({ behavior: "smooth" });
+    };
+
+    document.getElementById("reset-btn").onclick = function() {
+        state.forEach(s => { s.attempts = 0; s.solved = false; s.points = 0; });
+        resultBox.style.display = "none";
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    render();
+});
+</script>
+</body>
+</html>

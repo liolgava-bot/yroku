@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>6 клас — Тести з інформатики</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>Інтерактивні тести з інформатики</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #1e293b; margin: 0; padding: 30px 20px; }
+        .container { max-width: 900px; margin: 0 auto; text-align: center; }
+        h1 { color: #1e3a8a; font-size: 2.2em; margin-bottom: 10px; }
+        p.subtitle { color: #64748b; font-size: 1.15em; margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 20px; }
+        .card { background: #fff; border-radius: 14px; padding: 28px 20px; text-decoration: none; color: inherit; border: 2px solid #e2e8f0; transition: all 0.25s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; }
+        .card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 10px 25px rgba(59,130,246,0.15); }
+        .num { font-size: 2.5em; font-weight: 800; color: #1d4ed8; line-height: 1; }
+        .label { font-size: 1.1em; font-weight: 600; margin: 8px 0 14px; color: #334155; }
+        .badge { padding: 5px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #f1f5f9; color: #64748b; }
+        .badge.active { background: #dcfce7; color: #15803d; }
+    </style>
 </head>
 <body>
-<div class="container">
-    <a href="../index.html" class="back-link">← Назад до вибору класу</a>
-    <header>
-        <h1>6 клас: Інформатика</h1>
-        <p class="subtitle">Розділ тестування</p>
-    </header>
-    <div class="empty-state">
-        <h2>Тести для 6 класу ще готуються</h2>
-        <p>Завітайте сюди пізніше, коли з'являться нові завдання за розкладом.</p>
+    <div class="container">
+        <h1>Інтерактивні тести з інформатики</h1>
+        <p class="subtitle">Оберіть свій клас для переходу до завдань</p>
+        <div class="grid">
+            <a href="5-klas/" class="card"><div class="num">5</div><div class="label">клас</div><div class="badge">Скоро</div></a>
+            <a href="6-klas/" class="card"><div class="num">6</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
+            <a href="7-klas/" class="card"><div class="num">7</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
+            <a href="8-klas/" class="card"><div class="num">8</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
+            <a href="9-klas/" class="card"><div class="num">9</div><div class="label">клас</div><div class="badge">Скоро</div></a>
+            <a href="10-klas/" class="card"><div class="num">10</div><div class="label">клас</div><div class="badge">Скоро</div></a>
+            <a href="11-klas/" class="card"><div class="num">11</div><div class="label">клас</div><div class="badge">Скоро</div></a>
+            <a href="12-klas/" class="card"><div class="num">12</div><div class="label">клас</div><div class="badge">Скоро</div></a>
+        </div>
     </div>
-</div>
 </body>
 </html>
