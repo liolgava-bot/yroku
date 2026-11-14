@@ -3,35 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Інтерактивні тести з інформатики</title>
+    <title>6 клас — Тести з інформатики</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #1e293b; margin: 0; padding: 30px 20px; }
-        .container { max-width: 900px; margin: 0 auto; text-align: center; }
-        h1 { color: #1e3a8a; font-size: 2.2em; margin-bottom: 10px; }
-        p.subtitle { color: #64748b; font-size: 1.15em; margin-bottom: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 20px; }
-        .card { background: #fff; border-radius: 14px; padding: 28px 20px; text-decoration: none; color: inherit; border: 2px solid #e2e8f0; transition: all 0.25s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; }
-        .card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 10px 25px rgba(59,130,246,0.15); }
-        .num { font-size: 2.5em; font-weight: 800; color: #1d4ed8; line-height: 1; }
-        .label { font-size: 1.1em; font-weight: 600; margin: 8px 0 14px; color: #334155; }
-        .badge { padding: 5px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #f1f5f9; color: #64748b; }
-        .badge.active { background: #dcfce7; color: #15803d; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #1d4ed8; text-decoration: none; font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+        h1 { color: #1e3a8a; margin-bottom: 25px; }
+        .topic-card { background: #fff; border-radius: 12px; padding: 24px; border: 2px solid #e2e8f0; text-decoration: none; color: inherit; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .topic-card:hover { border-color: #3b82f6; transform: translateY(-3px); }
+        .topic-title { font-size: 1.25em; font-weight: bold; color: #0f172a; margin-bottom: 6px; }
+        .topic-desc { color: #64748b; font-size: 0.95em; }
+        .btn { background: #1d4ed8; color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Інтерактивні тести з інформатики</h1>
-        <p class="subtitle">Оберіть свій клас для переходу до завдань</p>
-        <div class="grid">
-            <a href="5-klas/" class="card"><div class="num">5</div><div class="label">клас</div><div class="badge">Скоро</div></a>
-            <a href="6-klas/" class="card"><div class="num">6</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
-            <a href="7-klas/" class="card"><div class="num">7</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
-            <a href="8-klas/" class="card"><div class="num">8</div><div class="label">клас</div><div class="badge active">1 тест</div></a>
-            <a href="9-klas/" class="card"><div class="num">9</div><div class="label">клас</div><div class="badge">Скоро</div></a>
-            <a href="10-klas/" class="card"><div class="num">10</div><div class="label">клас</div><div class="badge">Скоро</div></a>
-            <a href="11-klas/" class="card"><div class="num">11</div><div class="label">клас</div><div class="badge">Скоро</div></a>
-            <a href="12-klas/" class="card"><div class="num">12</div><div class="label">клас</div><div class="badge">Скоро</div></a>
-        </div>
+        <a href="../" class="back-link">← Назад до вибору класу</a>
+        <h1>6 клас: Оберіть тему тесту</h1>
+        <a href="oformlennya-dokumentiv/" class="topic-card">
+            <div>
+                <div class="topic-title">Оформлення текстових документів та рефератів</div>
+                <div class="topic-desc">12 завдань • 2 спроби • Максимум 10 балів</div>
+            </div>
+            <div class="btn">Розпочати →</div>
+        </a>
     </div>
 </body>
 </html>
