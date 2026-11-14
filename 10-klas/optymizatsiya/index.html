@@ -46,6 +46,20 @@ small{color:#596d85}
 footer{text-align:center;color:#50647d;padding:20px}
 @media(max-width:600px){.panel{padding:16px}button{min-height:44px}header{padding:24px 17px}}
 .back{display:inline-block;margin-bottom:12px;color:#ffcf65;text-decoration:none;font-weight:600}.back:hover{text-decoration:underline}
+#summary{overflow-x:auto}
+#cardOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#dfe8f5;overflow:auto;z-index:50;display:none;padding:10px;-webkit-overflow-scrolling:touch}
+#cardOverlay.on{display:block}
+.capbar{max-width:480px;margin:0 auto 8px;display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:#33496a}
+.capbar button{margin:0;padding:9px 13px}
+.rcard{max-width:480px;margin:0 auto;background:#fff;border:2px solid #194c95;border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.4;color:#152641}
+.rcard h3{margin:0 0 8px;font-size:15px;color:#16376b}
+.rcard .who{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.rcard .big{font-size:36px;font-weight:800;color:#16376b;line-height:1}
+.rcard table{margin:8px 0}
+.rcard td{padding:4px;font-size:13px}
+.rcard td:last-child{text-align:right;white-space:nowrap}
+.rcard .concl{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2f6fc;border-radius:8px;padding:8px;font-size:13px;margin:4px 0 8px}
+.rcard small{color:#596d85}
 </style>
 </head>
 <body>
@@ -137,14 +151,20 @@ footer{text-align:center;color:#50647d;padding:20px}
 <h2>5. Підсумковий звіт учня</h2>
 <p>У звіт увійдуть Ваші перевірки моделі, усі зафіксовані плани, налаштування розв’язувача, результати сценаріїв і висновок. Звіт можна зберегти як PDF.</p>
 <div id="summary" class="result"></div>
-<button onclick="exportPDF()">📄 Сформувати PDF</button>
+<button onclick="showCard()">📸 Показати картку результату</button>
+<button class="secondary" onclick="exportPDF()">📄 Сформувати PDF</button>
 <button class="secondary" onclick="window.print()">Друк сторінки</button>
 <button class="secondary" onclick="resetJournal()">Очистити журнал</button>
-<p><small>Звіт відкривається в окремій вкладці. Натисніть «Зберегти як PDF / Друк» та виберіть «Зберегти як PDF». Інтернет і додаткові бібліотеки не потрібні.</small></p>
+<p><strong>Як здати роботу:</strong> введіть ім’я та клас угорі, натисніть «Показати картку результату», зробіть <strong>скриншот</strong> картки й надішліть учителю.</p>
+<p><small>PDF-звіт відкривається в окремій вкладці. Натисніть «Зберегти як PDF / Друк» та виберіть «Зберегти як PDF». Інтернет і додаткові бібліотеки не потрібні.</small></p>
 </section>
 </main>
 <footer>Навчальний тренажер за тематикою § 15 підручника «Інформатика» (Бондаренко та співавтори). Завдання інтерактивно адаптовані.</footer>
 
+<div id="cardOverlay" role="dialog" aria-label="Картка результату">
+<div class="capbar"><span>📸 Зробіть скриншот цього екрана</span><button onclick="hideCard()">✕ Закрити</button></div>
+<div class="rcard" id="cardBody"></div>
+</div>
 <script>
 const $=id=>document.getElementById(id), KEY='opt-lab-2026-v1';
 let log=[];
@@ -175,13 +195,16 @@ function resetModel(){
     let e=document.createElement('div');
     e.className='drag';e.id='drag-'+id;e.draggable=true;e.tabIndex=0;e.textContent=label;
     e.addEventListener('dragstart',ev=>ev.dataTransfer.setData('text/plain',id));
-    e.addEventListener('click',()=>{
-      selected=id;
+    e.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      // якщо вже вибрано іншу картку — перенести її туди, де лежить ця
+      if(selected&&selected!==id){moveCard(selected,e.parentElement);return}
       document.querySelectorAll('.drag').forEach(d=>d.style.outline='');
-      e.style.outline='3px solid #ffba45';
+      if(selected===id){selected=null;return}
+      selected=id;e.style.outline='3px solid #ffba45';
     });
     e.addEventListener('keydown',ev=>{
-      if(ev.key==='Enter'){selected=id;e.style.outline='3px solid #ffba45'}
+      if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();e.click()}
     });
     $('pool').appendChild(e);
   });
@@ -194,6 +217,14 @@ document.querySelectorAll('.drop').forEach(z=>{
   z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('over');moveCard(e.dataTransfer.getData('text/plain'),z)});
   z.addEventListener('click',()=>{if(selected)moveCard(selected,z)});
 });
+
+// «Картки моделі» теж приймають картки (щоб можна було повернути зайву картку)
+(function(){
+  let p=$('pool');
+  p.addEventListener('dragover',e=>e.preventDefault());
+  p.addEventListener('drop',e=>{e.preventDefault();moveCard(e.dataTransfer.getData('text/plain'),p)});
+  p.addEventListener('click',()=>{if(selected)moveCard(selected,p)});
+})();
 
 function moveCard(id,z){
   let el=$('drag-'+id);
@@ -416,6 +447,22 @@ function renderSummary(){
     +(c?escapeHTML(c):'<em>Висновок ще не написано (розділ 4).</em>')+'</div></div>'+gradeHTML();
 }
 
+const WKEY=KEY+'-who';
+function saveWho(){try{localStorage.setItem(WKEY,JSON.stringify({n:$('student').value,k:$('klass').value}))}catch(e){}}
+function renderCard(){
+  let e=evaluate(),name=$('student').value.trim(),kl=$('klass').value.trim(),t=getConclusion();
+  const short=['Модель','Симулятор','Розв’язувач','Сценарії','Висновок'];
+  $('cardBody').innerHTML='<h3>Лабораторія оптимізації · 10 клас</h3>'
+    +'<div class="who"><div><b>'+(name?escapeHTML(name):'<span class="bad">⚠ Введіть ім’я</span>')+'</b><br>Клас: '+(kl?escapeHTML(kl):'<span class="bad">⚠ не вказано</span>')+'<br><small>'+escapeHTML(new Date().toLocaleString('uk-UA'))+'</small></div>'
+    +'<div style="text-align:right"><span class="big">'+(e.grade||'—')+'</span><b> / 12</b></div></div>'
+    +'<table>'+e.rows.map((r,i)=>'<tr><td>'+short[i]+'</td><td>'+fmt(r.score)+' / '+r.max+'</td></tr>').join('')+'</table>'
+    +'<b>Висновок учня:</b><div class="concl">'+(t?escapeHTML(t):'<em>не написано</em>')+'</div>'
+    +'<small>Оцінка автоматична, остаточну виставляє вчитель.</small>';
+}
+function showCard(){renderCard();$('cardOverlay').classList.add('on');$('cardOverlay').scrollTop=0;document.body.style.overflow='hidden'}
+function hideCard(){$('cardOverlay').classList.remove('on');document.body.style.overflow=''}
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')hideCard()});
+
 function resetJournal(){
   if(confirm('Видалити всю історію спроб на цьому пристрої?')){
     log=[];
@@ -461,6 +508,8 @@ function exportPDF(){
 }
 
 ['chairs','tables'].forEach(id=>$(id).addEventListener('input',simulation));
+try{let w=JSON.parse(localStorage.getItem(WKEY)||'{}');$('student').value=w.n||'';$('klass').value=w.k||''}catch(e){}
+['student','klass'].forEach(id=>$(id).addEventListener('input',saveWho));
 try{$('conclusion').value=localStorage.getItem(CKEY)||''}catch(e){}
 $('conclusion').addEventListener('input',()=>{storeConclusion();renderSummary()});
 resetModel();simulation();renderHistory();renderSummary();
