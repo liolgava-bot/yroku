@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Формальні та фактичні параметри. Передавання значень у функцію та з неї</title>
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --primary-light: #e8f5e9;
+            --primary-hover: #2e7d32;
+            --bg-color: #dcedc8;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border-color: #dadce0;
+            --error-bg: #fce8e6;
+            --error-border: #d93025;
+            --error-text: #a50e0e;
+            --success-bg: #e6f4ea;
+            --success-border: #1e8e3e;
+            --success-text: #137333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px 12px 60px;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: border-color 0.2s;
+        }
+
+        .header-card {
+            border-top: 10px solid var(--primary);
+        }
+
+        .header-card h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #111;
+        }
+
+        .header-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .section-banner {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .section-banner + .card {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 550px) {
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .text-input:focus {
+            border-color: var(--primary);
+            border-width: 2px;
+            padding: 9px 11px;
+        }
+
+        .question-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 14px;
+        }
+
+        .q-num {
+            color: var(--primary);
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            padding: 12px 16px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 15px;
+            white-space: pre;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            color: #24292e;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        .option-label:hover {
+            background-color: #f1f8e9;
+        }
+
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            font-size: 15px;
+        }
+
+        .code-inline {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        /* Grid question styles */
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        .grid-table th {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-muted);
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .grid-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f1f3f4;
+            text-align: center;
+        }
+
+        .grid-table td:first-child {
+            text-align: left;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .grid-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .grid-table input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Feedback styles */
+        .feedback-box {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .feedback-box.correct {
+            display: block;
+            background-color: var(--success-bg);
+            border-left: 4px solid var(--success-border);
+            color: var(--success-text);
+        }
+
+        .feedback-box.incorrect {
+            display: block;
+            background-color: var(--error-bg);
+            border-left: 4px solid var(--error-border);
+            color: var(--error-text);
+        }
+
+        .feedback-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .feedback-explanation {
+            color: #202124;
+            margin-top: 6px;
+            line-height: 1.45;
+        }
+
+        /* Actions & Result */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-light);
+        }
+
+        #result-panel {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            padding: 28px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .score-badge {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 36px;
+            font-weight: 800;
+            padding: 14px 32px;
+            border-radius: 12px;
+            margin: 14px 0;
+            border: 2px solid var(--primary);
+        }
+
+        .result-details {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .validation-msg {
+            color: var(--error-border);
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Заголовок тесту -->
+    <div class="card header-card">
+        <h1>Формальні та фактичні параметри. Передавання значень у функцію та з неї.</h1>
+        <p>Онлайн-тестування з інформатики (Python). Максимальна оцінка — <strong>11 балів</strong>. Після завершення ви побачите свій результат та пояснення до кожного завдання, де були допущені помилки.</p>
+        
+        <div class="student-info">
+            <div class="input-group">
+                <label for="student-name">Прізвище та ім'я учня *</label>
+                <input type="text" id="student-name" class="text-input" placeholder="Наприклад: Коваленко Олександр">
+            </div>
+            <div class="input-group">
+                <label for="student-class">Клас *</label>
+                <input type="text" id="student-class" class="text-input" placeholder="Наприклад: 9-А">
+            </div>
+        </div>
+        <div id="validation-alert" class="validation-msg">Будь ласка, вкажіть ваше прізвище, ім'я та клас перед перевіркою тесту.</div>
+    </div>
+
+    <!-- Панель результатів -->
+    <div id="result-panel">
+        <h2 id="result-student-title">Результат тестування</h2>
+        <div class="score-badge" id="final-score">0 / 11 балів</div>
+        <p class="result-details" id="raw-stats"></p>
+        <p style="font-size: 14px; color: #555;">Перегляньте розбір відповідей нижче, щоб з'ясувати причини помилок.</p>
+    </div>
+
+    <div class="section-banner">Тест (13 запитань)</div>
+
+    <form id="quiz-form">
+        <!-- Питання 1 -->
+        <div class="card" id="card-q1">
+            <div class="question-title"><span class="q-num">1.</span> Для опису власної функції використовують службове слово</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q1" value="len"> <span class="option-text code-inline">len</span></label>
+                <label class="option-label"><input type="radio" name="q1" value="int"> <span class="option-text code-inline">int</span></label>
+                <label class="option-label"><input type="radio" name="q1" value="round"> <span class="option-text code-inline">round</span></label>
+                <label class="option-label"><input type="radio" name="q1" value="def"> <span class="option-text code-inline">def</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q1"></div>
+        </div>
+
+        <!-- Питання 2 -->
+        <div class="card" id="card-q2">
+            <div class="question-title"><span class="q-num">2.</span> Функція, призначена для введення даних</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q2" value="input()"> <span class="option-text code-inline">input()</span></label>
+                <label class="option-label"><input type="radio" name="q2" value="float()"> <span class="option-text code-inline">float()</span></label>
+                <label class="option-label"><input type="radio" name="q2" value="print()"> <span class="option-text code-inline">print()</span></label>
+                <label class="option-label"><input type="radio" name="q2" value="int()"> <span class="option-text code-inline">int()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q2"></div>
+        </div>
+
+        <!-- Питання 3 -->
+        <div class="card" id="card-q3">
+            <div class="question-title"><span class="q-num">3.</span> Що буде надруковано в результаті виконання фрагменту програми?</div>
+            <div class="code-block">def myfun(n):
+    n = n + 1
+print(myfun(0))</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q3" value="myfun(0)"> <span class="option-text code-inline">myfun(0)</span></label>
+                <label class="option-label"><input type="radio" name="q3" value="None"> <span class="option-text code-inline">None</span></label>
+                <label class="option-label"><input type="radio" name="q3" value="0"> <span class="option-text code-inline">0</span></label>
+                <label class="option-label"><input type="radio" name="q3" value="1"> <span class="option-text code-inline">1</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q3"></div>
+        </div>
+
+        <!-- Питання 4 -->
+        <div class="card" id="card-q4">
+            <div class="question-title"><span class="q-num">4.</span> Функція, призначена для перетворення тексту в ціле число</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q4" value="float()"> <span class="option-text code-inline">float()</span></label>
+                <label class="option-label"><input type="radio" name="q4" value="print()"> <span class="option-text code-inline">print()</span></label>
+                <label class="option-label"><input type="radio" name="q4" value="int()"> <span class="option-text code-inline">int()</span></label>
+                <label class="option-label"><input type="radio" name="q4" value="input()"> <span class="option-text code-inline">input()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q4"></div>
+        </div>
+
+        <!-- Питання 5 -->
+        <div class="card" id="card-q5">
+            <div class="question-title"><span class="q-num">5.</span> Чи є наведені твердження правильними? <em>(Оберіть усі правильні твердження)</em></div>
+            <div class="options-list">
+                <label class="option-label"><input type="checkbox" name="q5" value="0"> <span class="option-text">Оператор return припиняє виконання функції і повертає значення виразу</span></label>
+                <label class="option-label"><input type="checkbox" name="q5" value="1"> <span class="option-text">Якщо оператор return відсутній в тілі функції, функція повертає None</span></label>
+                <label class="option-label"><input type="checkbox" name="q5" value="2"> <span class="option-text">Виклик функції, яка має повернути значення, має бути окремим оператором</span></label>
+                <label class="option-label"><input type="checkbox" name="q5" value="3"> <span class="option-text">Виклик функції, яка має повернути значення, не може бути окремим оператором</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q5"></div>
+        </div>
+
+        <!-- Питання 6 -->
+        <div class="card" id="card-q6">
+            <div class="question-title"><span class="q-num">6.</span> Функція, призначена для визначення кількості елементів</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q6" value="len()"> <span class="option-text code-inline">len()</span></label>
+                <label class="option-label"><input type="radio" name="q6" value="int()"> <span class="option-text code-inline">int()</span></label>
+                <label class="option-label"><input type="radio" name="q6" value="float()"> <span class="option-text code-inline">float()</span></label>
+                <label class="option-label"><input type="radio" name="q6" value="round()"> <span class="option-text code-inline">round()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q6"></div>
+        </div>
+
+        <!-- Питання 7 -->
+        <div class="card" id="card-q7">
+            <div class="question-title"><span class="q-num">7.</span> Функція, призначена для перетворення тексту в дійсне число</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q7" value="int()"> <span class="option-text code-inline">int()</span></label>
+                <label class="option-label"><input type="radio" name="q7" value="input()"> <span class="option-text code-inline">input()</span></label>
+                <label class="option-label"><input type="radio" name="q7" value="float()"> <span class="option-text code-inline">float()</span></label>
+                <label class="option-label"><input type="radio" name="q7" value="print()"> <span class="option-text code-inline">print()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q7"></div>
+        </div>
+
+        <!-- Питання 8 -->
+        <div class="card" id="card-q8">
+            <div class="question-title"><span class="q-num">8.</span> Функція, призначена для округлення дійсного числа</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q8" value="round()"> <span class="option-text code-inline">round()</span></label>
+                <label class="option-label"><input type="radio" name="q8" value="len()"> <span class="option-text code-inline">len()</span></label>
+                <label class="option-label"><input type="radio" name="q8" value="int()"> <span class="option-text code-inline">int()</span></label>
+                <label class="option-label"><input type="radio" name="q8" value="float()"> <span class="option-text code-inline">float()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q8"></div>
+        </div>
+
+        <!-- Питання 9 -->
+        <div class="card" id="card-q9">
+            <div class="question-title"><span class="q-num">9.</span> Чи є наведені твердження правильними? <em>(Оберіть усі правильні твердження)</em></div>
+            <div class="options-list">
+                <label class="option-label"><input type="checkbox" name="q9" value="0"> <span class="option-text">Локальними є об'єкти, які описані та діють лише всередині підпрограми</span></label>
+                <label class="option-label"><input type="checkbox" name="q9" value="1"> <span class="option-text">Глобальні змінні - це ті, що визначені в основній програмі</span></label>
+                <label class="option-label"><input type="checkbox" name="q9" value="2"> <span class="option-text">Область видимості змінної - це та частина програмного коду, в якій змінна доступна для використання</span></label>
+                <label class="option-label"><input type="checkbox" name="q9" value="3"> <span class="option-text">Після виходу з підпрограми значення локальної змінної зберігається</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q9"></div>
+        </div>
+
+        <!-- Питання 10 -->
+        <div class="card" id="card-q10">
+            <div class="question-title"><span class="q-num">10.</span> Що надрукує наведена програма?</div>
+            <div class="code-block">def mult(x, y):
+    return x * y
+x = 2
+print(mult(x, x + 1))</div>
+            <input type="text" name="q10" id="q10-input" class="text-input" placeholder="Введіть вашу відповідь (число)">
+            <div class="feedback-box" id="fb-q10"></div>
+        </div>
+
+        <!-- Питання 11 -->
+        <div class="card" id="card-q11">
+            <div class="question-title"><span class="q-num">11.</span> Що буде надруковано в результаті виконання фрагменту програми?</div>
+            <div class="code-block">def f(n):
+    n = n + 1
+    return(n)
+print(f(1) + f(2))</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q11" value="5"> <span class="option-text code-inline">5</span></label>
+                <label class="option-label"><input type="radio" name="q11" value="2"> <span class="option-text code-inline">2</span></label>
+                <label class="option-label"><input type="radio" name="q11" value="3"> <span class="option-text code-inline">3</span></label>
+                <label class="option-label"><input type="radio" name="q11" value="4"> <span class="option-text code-inline">4</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q11"></div>
+        </div>
+
+        <!-- Питання 12 -->
+        <div class="card" id="card-q12">
+            <div class="question-title"><span class="q-num">12.</span> Функція, призначена для виведення даних</div>
+            <div class="options-list">
+                <label class="option-label"><input type="radio" name="q12" value="float()"> <span class="option-text code-inline">float()</span></label>
+                <label class="option-label"><input type="radio" name="q12" value="int()"> <span class="option-text code-inline">int()</span></label>
+                <label class="option-label"><input type="radio" name="q12" value="input()"> <span class="option-text code-inline">input()</span></label>
+                <label class="option-label"><input type="radio" name="q12" value="print()"> <span class="option-text code-inline">print()</span></label>
+            </div>
+            <div class="feedback-box" id="fb-q12"></div>
+        </div>
+
+        <!-- Питання 13 -->
+        <div class="card" id="card-q13">
+            <div class="question-title"><span class="q-num">13.</span> Установіть відповідність між операторами і їх призначенням</div>
+            <div style="overflow-x: auto;">
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">Фрагмент коду</th>
+                            <th>Оператор виклику функції</th>
+                            <th>Тіло функції</th>
+                            <th>Заголовок функції</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>def mult(x, y):</td>
+                            <td><input type="radio" name="q13_row1" value="call"></td>
+                            <td><input type="radio" name="q13_row1" value="body"></td>
+                            <td><input type="radio" name="q13_row1" value="header"></td>
+                        </tr>
+                        <tr>
+                            <td>x = mult(3, 5)</td>
+                            <td><input type="radio" name="q13_row2" value="call"></td>
+                            <td><input type="radio" name="q13_row2" value="body"></td>
+                            <td><input type="radio" name="q13_row2" value="header"></td>
+                        </tr>
+                        <tr>
+                            <td>return x*y</td>
+                            <td><input type="radio" name="q13_row3" value="call"></td>
+                            <td><input type="radio" name="q13_row3" value="body"></td>
+                            <td><input type="radio" name="q13_row3" value="header"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="feedback-box" id="fb-q13"></div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn btn-primary" onclick="evaluateQuiz()">Завершити тест та перевірити</button>
+            <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Очистити форму</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const quizData = {
+        q1: {
+            type: 'radio',
+            correct: 'def',
+            correctLabel: 'def',
+            explanation: 'У мові Python створення (оголошення) власної функції завжди починається зі службового слова <strong>def</strong> (від англ. <em>define</em> — визначити), після якого вказують ім’я функції та параметри у дужках.'
+        },
+        q2: {
+            type: 'radio',
+            correct: 'input()',
+            correctLabel: 'input()',
+            explanation: 'Функція <strong>input()</strong> зчитує рядок тексту, який користувач вводить з клавіатури. <code>print()</code> використовується для виведення, а <code>int()</code> та <code>float()</code> — для перетворення типів даних.'
+        },
+        q3: {
+            type: 'radio',
+            correct: 'None',
+            correctLabel: 'None',
+            explanation: 'У тілі функції <code>myfun(n)</code> відсутній оператор <strong>return</strong>. Якщо функція не повертає жодного значення явно, Python автоматично повертає спеціальне значення <strong>None</strong> («нічого»).'
+        },
+        q4: {
+            type: 'radio',
+            correct: 'int()',
+            correctLabel: 'int()',
+            explanation: 'Функція <strong>int()</strong> (від англ. <em>integer</em> — ціле число) перетворює рядок символів або дробове число у ціле число.'
+        },
+        q5: {
+            type: 'checkbox',
+            correct: ['0', '1'],
+            correctLabel: '1) Оператор return припиняє виконання функції і повертає значення виразу; 2) Якщо оператор return відсутній в тілі функції, функція повертає None.',
+            explanation: 'Оператор <code>return</code> справді завершує роботу функції та повертає результат, а без нього функція повертає <code>None</code>. Останні два твердження хибні: виклик функції, що повертає значення, зазвичай використовують у виразах (наприклад, <code>x = f(2)</code> або <code>print(f(2))</code>), хоча технічно його можна записати й окремим рядком.'
+        },
+        q6: {
+            type: 'radio',
+            correct: 'len()',
+            correctLabel: 'len()',
+            explanation: 'Функція <strong>len()</strong> (від англ. <em>length</em> — довжина) повертає кількість символів у рядку або кількість елементів у списку, кортежі тощо.'
+        },
+        q7: {
+            type: 'radio',
+            correct: 'float()',
+            correctLabel: 'float()',
+            explanation: 'Функція <strong>float()</strong> перетворює текстовий рядок або ціле число у дійсне число (число з плаваючою крапкою).'
+        },
+        q8: {
+            type: 'radio',
+            correct: 'round()',
+            correctLabel: 'round()',
+            explanation: 'Функція <strong>round()</strong> використовується для математичного округлення дійсного числа до найближчого цілого або до заданої кількості знаків після коми.'
+        },
+        q9: {
+            type: 'checkbox',
+            correct: ['0', '1', '2'],
+            correctLabel: 'Перші три твердження є правильними.',
+            explanation: 'Локальні змінні створюються всередині функції та знищуються одразу після завершення її виконання — тому четверте твердження («Після виходу з підпрограми значення локальної змінної зберігається») є хибним.'
+        },
+        q10: {
+            type: 'text',
+            correct: '6',
+            correctLabel: '6',
+            explanation: 'Змінна <code>x</code> дорівнює <code>2</code>. Під час виклику <code>mult(x, x + 1)</code> у функцію передаються фактичні параметри <code>2</code> і <code>3</code>. Функція повертає їх добуток: <code>2 * 3 = 6</code>.'
+        },
+        q11: {
+            type: 'radio',
+            correct: '5',
+            correctLabel: '5',
+            explanation: 'Функція <code>f(n)</code> збільшує передане число на 1 і повертає результат. Отже, <code>f(1)</code> поверне <code>2</code>, а <code>f(2)</code> поверне <code>3</code>. Їх сума: <code>2 + 3 = 5</code>.'
+        },
+        q12: {
+            type: 'radio',
+            correct: 'print()',
+            correctLabel: 'print()',
+            explanation: 'Функція <strong>print()</strong> призначена для виведення текстової та числової інформації на екран.'
+        },
+        q13: {
+            type: 'grid',
+            correct: {
+                row1: 'header',
+                row2: 'call',
+                row3: 'body'
+            },
+            correctLabel: 'def mult(x, y): — Заголовок функції; x = mult(3, 5) — Оператор виклику функції; return x*y — Тіло функції.',
+            explanation: '<strong>def mult(x, y):</strong> — це заголовок функції (містить слово <code>def</code>, назву та формальні параметри). <strong>return x*y</strong> — інструкція всередині функції, тобто її тіло. <strong>x = mult(3, 5)</strong> — звернення до функції з передачею фактичних аргументів (оператор виклику).'
+        }
+    };
+
+    function evaluateQuiz() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        const classInput = document.getElementById('student-class').value.trim();
+        const alertBox = document.getElementById('validation-alert');
+
+        if (!nameInput || !classInput) {
+            alertBox.style.display = 'block';
+            document.getElementById('student-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        alertBox.style.display = 'none';
+
+        let rawCorrectCount = 0;
+        const totalQuestions = 13;
+        const maxGrade = 11;
+
+        for (let i = 1; i <= totalQuestions; i++) {
+            const qKey = 'q' + i;
+            const qData = quizData[qKey];
+            let isCorrect = false;
+
+            if (qData.type === 'radio') {
+                const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+                if (selected && selected.value === qData.correct) {
+                    isCorrect = true;
+                }
+            } else if (qData.type === 'checkbox') {
+                const checkedNodes = document.querySelectorAll(`input[name="${qKey}"]:checked`);
+                const selectedValues = Array.from(checkedNodes).map(el => el.value).sort();
+                const expectedValues = [...qData.correct].sort();
+                if (selectedValues.length === expectedValues.length &&
+                    selectedValues.every((val, idx) => val === expectedValues[idx])) {
+                    isCorrect = true;
+                }
+            } else if (qData.type === 'text') {
+                const val = document.getElementById('q10-input').value.trim();
+                if (val === qData.correct) {
+                    isCorrect = true;
+                }
+            } else if (qData.type === 'grid') {
+                const r1 = document.querySelector('input[name="q13_row1"]:checked');
+                const r2 = document.querySelector('input[name="q13_row2"]:checked');
+                const r3 = document.querySelector('input[name="q13_row3"]:checked');
+                if (r1 && r2 && r3 &&
+                    r1.value === qData.correct.row1 &&
+                    r2.value === qData.correct.row2 &&
+                    r3.value === qData.correct.row3) {
+                    isCorrect = true;
+                }
+            }
+
+            const fbBox = document.getElementById('fb-' + qKey);
+            const card = document.getElementById('card-' + qKey);
+
+            if (isCorrect) {
+                rawCorrectCount++;
+                card.style.borderColor = '#1e8e3e';
+                fbBox.className = 'feedback-box correct';
+                fbBox.innerHTML = `<div class="feedback-title">✓ Правильно!</div>`;
+            } else {
+                card.style.borderColor = '#d93025';
+                fbBox.className = 'feedback-box incorrect';
+                fbBox.innerHTML = `
+                    <div class="feedback-title">✕ Неправильно</div>
+                    <div><strong>Правильна відповідь:</strong> ${qData.correctLabel}</div>
+                    <div class="feedback-explanation"><strong>Пояснення:</strong> ${qData.explanation}</div>
+                `;
+            }
+        }
+
+        // Розрахунок оцінки за 11-бальною шкалою
+        const scaledScore = Math.round((rawCorrectCount / totalQuestions) * maxGrade);
+        const percentage = Math.round((rawCorrectCount / totalQuestions) * 100);
+
+        const resultPanel = document.getElementById('result-panel');
+        document.getElementById('result-student-title').textContent = `${nameInput} (${classInput})`;
+        document.getElementById('final-score').textContent = `${scaledScore} / ${maxGrade} балів`;
+        document.getElementById('raw-stats').textContent = `Правильних відповідей: ${rawCorrectCount} із ${totalQuestions} (${percentage}%)`;
+        
+        resultPanel.style.display = 'block';
+        resultPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetQuiz() {
+        document.getElementById('quiz-form').reset();
+        document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('validation-alert').style.display = 'none';
+
+        for (let i = 1; i <= 13; i++) {
+            const fbBox = document.getElementById('fb-q' + i);
+            const card = document.getElementById('card-q' + i);
+            fbBox.className = 'feedback-box';
+            fbBox.innerHTML = '';
+            card.style.borderColor = '#dadce0';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
